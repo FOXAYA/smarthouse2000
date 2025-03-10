@@ -1,11 +1,3 @@
-/**
-* Template Name: Maundy
-* Template URL: https://bootstrapmade.com/maundy-free-coming-soon-bootstrap-theme/
-* Updated: Feb 01 2025 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
-
 (function() {
   "use strict";
 
@@ -15,7 +7,7 @@
   function toggleScrolled() {
     const selectBody = document.querySelector('body');
     const selectHeader = document.querySelector('#header');
-    if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
+    if (!selectHeader) return;
     window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
   }
 
@@ -29,8 +21,6 @@
 
   function mobileNavToogle() {
     document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
   }
   if (mobileNavToggleBtn) {
     mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
@@ -45,7 +35,6 @@
         mobileNavToogle();
       }
     });
-
   });
 
   /**
@@ -105,28 +94,36 @@
   window.addEventListener('load', aosInit);
 
   /**
-   * Countdown timer
+   * Countdown timer (Starts from 30 days)
    */
-  function updateCountDown(countDownItem) {
-    const timeleft = new Date(countDownItem.getAttribute('data-count')).getTime() - new Date().getTime();
+  function startCountDown(countDownItem) {
+    let countDownDate = new Date();
+    countDownDate.setDate(countDownDate.getDate() + 30); // تحديد التاريخ بعد 30 يومًا من الآن
+    countDownDate = countDownDate.getTime();
 
-    const days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
-    const hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    const minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
-    const seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
+    function updateCountDown() {
+      let now = new Date().getTime();
+      let timeleft = countDownDate - now;
 
-    countDownItem.querySelector('.count-days').innerHTML = days;
-    countDownItem.querySelector('.count-hours').innerHTML = hours;
-    countDownItem.querySelector('.count-minutes').innerHTML = minutes;
-    countDownItem.querySelector('.count-seconds').innerHTML = seconds;
+      let days = Math.floor(timeleft / (1000 * 60 * 60 * 24));
+      let hours = Math.floor((timeleft % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      let minutes = Math.floor((timeleft % (1000 * 60 * 60)) / (1000 * 60));
+      let seconds = Math.floor((timeleft % (1000 * 60)) / 1000);
 
+      countDownItem.querySelector('.count-days').innerHTML = days;
+      countDownItem.querySelector('.count-hours').innerHTML = hours;
+      countDownItem.querySelector('.count-minutes').innerHTML = minutes;
+      countDownItem.querySelector('.count-seconds').innerHTML = seconds;
+
+      if (timeleft <= 0) {
+        clearInterval(interval);
+      }
+    }
+
+    updateCountDown();
+    let interval = setInterval(updateCountDown, 1000);
   }
 
-  document.querySelectorAll('.countdown').forEach(function(countDownItem) {
-    updateCountDown(countDownItem);
-    setInterval(function() {
-      updateCountDown(countDownItem);
-    }, 1000);
-  });
+  document.querySelectorAll('.countdown').forEach(startCountDown);
 
 })();
